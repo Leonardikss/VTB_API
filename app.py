@@ -6,7 +6,6 @@ from datetime import datetime
 app = Flask(__name__)
 api = Api(app)
 
-# Хранилище для общих счетов
 shared_accounts = {}
 
 class SharedAccount(Resource):
@@ -24,7 +23,7 @@ class SharedAccount(Resource):
             'accountId': account_id,
             'owner': owner,
             'cardIds': card_ids,
-            'balance': 0,  # Инициализация баланса
+            'balance': 0,
             'creationDate': datetime.utcnow().isoformat()
         }
 
@@ -61,14 +60,11 @@ class SharedAccount(Resource):
         account['balance'] += amount
         return {'accountId': account_id, 'newBalance': account['balance']}, 200
 
-# Настройка маршрутов
 api.add_resource(SharedAccount, '/shared-accounts', '/shared-accounts/<string:account_id>')
 
-# Маршрут для главной страницы
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# Запуск сервера
 if __name__ == '__main__':
     app.run(debug=True, port=3000)
