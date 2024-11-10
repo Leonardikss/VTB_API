@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление общими счетами</title>
+    <script>
+        async function createAccount() {
+            const owner = document.getElementById('owner').value;
+            const cardIds = document.getElementById('cardIds').value.split(',');
+
+            const response = await fetch('/shared-accounts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ owner, cardIds })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                alert('Счет создан: ' + JSON.stringify(result));
+                document.getElementById('owner').value = '';
+                document.getElementById('cardIds').value = '';
+            } else {
+                alert('Ошибка: ' + result.error);
+            }
+        }
+
+        async function getAccount() {
+            const accountId = document.getElementById('accountId').value;
+
+            const response = await fetch(`/shared-accounts/${accountId}`);
+            const result = await response.json();
+            if (response.ok) {
+                alert('Информация о счете: ' + JSON.stringify(result));
+            } else {
+                alert('Ошибка: ' + result.error);
+            }
+        }
+
+        async function deleteAccount() {
+            const accountId = document.getElementById('deleteAccountId').value;
+
+            const response = await fetch(`/shared-accounts/${accountId}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                alert('Счет удален');
+            } else {
+                const result = await response.json();
+                alert('Ошибка: ' + result.error);
+            }
+        }
+
+        async function depositAccount() {
+            const accountId = document.getElementById('depositAccountId').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+
+            const response = await fetch(`/shared-accounts/${accountId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ amount })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                alert('Счет пополнен. Новый баланс: ' + result.newBalance);
+                document.getElementById('depositAccountId').value = '';
+                document.getElementById('amount').value = '';
+            } else {
+                alert('Ошибка: ' + result.error);
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Управление общими счетами</h1>
+    <h2>Создать общий счет</h2>
+    <label for="owner">Владелец:</label>
+    <input type="text" id="owner" required>
+    <label for="cardIds">ID карт (через запятую):</label>
+    <input type="text" id="cardIds" required>
+    <button onclick="createAccount()">Создать</button>
+
+    <h2>Получить общий счет</h2>
+    <label for="accountId">ID счета:</label>
+    <input type="text" id="accountId" required>
+    <button onclick="getAccount()">Получить</button>
+
+    <h2>Удалить общий счет</h2>
+    <label for="deleteAccountId">ID счета:</label>
+    <input type="text" id="deleteAccountId" required>
+    <button onclick="deleteAccount()">Удалить</button>
+
+    <h2>Пополнить общий счет</h2>
+    <label for="depositAccountId">ID счета:</label>
+    <input type="text" id="depositAccountId" required>
+    <label for="amount">Сумма:</label>
+    <input type="number" id="amount" required>
+    <button onclick="depositAccount()">Пополнить</button>
+</body>
+</html>

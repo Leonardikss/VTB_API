@@ -1,0 +1,177 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Shared Accounts API",
+    "description": "API для управления общими счетами"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": ["http"],
+  "paths": {
+    "/shared-accounts": {
+      "post": {
+        "tags": ["SharedAccount"],
+        "summary": "Создание нового общего счета",
+        "parameters": [
+          {
+            "name": "owner",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "owner": {
+                  "type": "string",
+                  "description": "Владелец счета"
+                },
+                "cardIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Список ID карт"
+                }
+              },
+              "required": ["owner", "cardIds"]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Счет успешно создан",
+            "schema": {
+              "$ref": "#/definitions/SharedAccount"
+            }
+          },
+          "400": {
+            "description": "Неверные данные запроса"
+          }
+        }
+      }
+    },
+    "/shared-accounts/{account_id}": {
+      "get": {
+        "tags": ["SharedAccount"],
+        "summary": "Получение информации о счете по ID",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID счета"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Информация о счете",
+            "schema": {
+              "$ref": "#/definitions/SharedAccount"
+            }
+          },
+          "404": {
+            "description": "Счет не найден"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["SharedAccount"],
+        "summary": "Удаление общего счета по ID",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID счета"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Счет успешно удален"
+          },
+          "404": {
+            "description": "Счет не найден"
+          }
+        }
+      },
+      "put": {
+        "tags": ["SharedAccount"],
+        "summary": "Пополнение общего счета",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID счета"
+          },
+          {
+            "name": "amount",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "number",
+                  "description": "Сумма для пополнения"
+                }
+              },
+              "required": ["amount"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Счет успешно пополнен",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "accountId": {
+                  "type": "string"
+                },
+                "newBalance": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Счет не найден"
+          },
+          "400": {
+            "description": "Сумма должна быть положительной"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "SharedAccount": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "cardIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "balance": {
+          "type": "number"
+        },
+        "creationDate": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}
