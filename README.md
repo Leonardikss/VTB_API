@@ -12,9 +12,8 @@ Shared Accounts API - это простое веб-приложение, кот�
 
    ```bash
    git clone https://github.com/Leonardikss/VTB_API.git
-```
+
 
 2. установите необходимые библиотеки:
 ```
    pip install -r requirements.txt
-```
